@@ -1,6 +1,10 @@
 const app = require('express')()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
+const express = require('express')
+const path = require('path')
+
+const port = process.env.PORT || 80
 
 let videoUrl = ''
 let lastTimestamp = ''
@@ -50,6 +54,8 @@ io.on('connection', (socket) => {
 	})
 })
 
-http.listen(4000, () => {
-	console.log('listening on *:4000')
+app.use(express.static(path.join(__dirname, '../build')))
+
+http.listen(port, () => {
+	console.log(`listening on *:${port}`)
 })

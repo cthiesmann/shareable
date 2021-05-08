@@ -5,8 +5,7 @@ import styles from './Video.module.css'
 
 const socket = io('/')
 
-
-export function VideoSlave() {
+export function Video() {
 	const [videoUrl, setVideoUrl] = useState('')
 	const [playerUrl, setPlayerUrl] = useState('')
 	const [isPlaying, setIsPlaying] = useState(true)
@@ -42,8 +41,9 @@ export function VideoSlave() {
 		})
 	}, [])
 	
-	const handleUrlChange = () => {
+	const handleUrlChange = (event) => {
 		socket.emit('onUrlChange', videoUrl)
+		event.preventDefault()
 	}
 
 	const handleOnPause = (props) => {
@@ -69,16 +69,16 @@ export function VideoSlave() {
 
 	const handleOnReady = (props) => {
 		if(props) {
-			console.log('onReady', props);
 			socket.emit('onReady')
 		}
 	}
 
 	return (
 		<>
-		<input type="text" value={videoUrl} onChange={event => setVideoUrl(event.target.value)}/>
-		<button onClick={handleUrlChange}>Go!</button>
-		<div>isPlaying = {isPlaying ? 'true' : 'false'}</div>
+		<form onSubmit={handleUrlChange}>
+			<input type="text" value={videoUrl} onChange={event => setVideoUrl(event.target.value)}/>
+			<input type="submit" value="Go!"/>
+		</form>
 		<div className={styles.wrapper}>
 			<ReactPlayer
 				ref={player} 

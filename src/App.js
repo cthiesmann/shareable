@@ -1,11 +1,11 @@
 import React from 'react';
-import { VideoSlave } from './features/video/VideoSlave';
+import { Video } from './features/video/Video';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <VideoSlave/>
+      <Video/>
     </div>
   );
 }

@@ -6,16 +6,16 @@ const path = require('path')
 
 const port = process.env.PORT || 80
 
-let videoUrl = ''
-let lastTimestamp = ''
-let isPlaying = false
+let videoUrl = 'https://www.youtube.com/watch?v=XX7DwRH95sc'
+let lastTimestamp = 1298.3794669046326
+let isPlaying = true
 
 io.on('connection', (socket) => {
 	console.log("Socket connected: " + socket.id);
 	socket.emit('urlChange', videoUrl)
 
-	socket.on('onReady', (data) => {
-		console.log(socket.id, 'onReady', data, { lastTimestamp, isPlaying });
+	socket.on('onReady', () => {
+		console.log(socket.id, 'onReady', { lastTimestamp, isPlaying });
 		socket.emit('innitialState', { lastTimestamp, isPlaying })
 	})
 	
@@ -29,11 +29,6 @@ io.on('connection', (socket) => {
 		//console.log('onUpdateLastTimestamp', data)
 		if(data.playedSeconds > 0)
 			lastTimestamp = data.playedSeconds
-	})
-
-	socket.on('onReady', (data) => {
-		console.log(socket.id, 'onReady', data)
-		socket.broadcast.emit('ready', data)
 	})
   
 	socket.on('onProgress', (data) => {

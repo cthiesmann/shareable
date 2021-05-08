@@ -7,26 +7,27 @@ const socket = io('/')
 
 
 export function VideoSlave() {
-	const [videoUrl, setVideoUrl] = useState('https://www.youtube.com/watch?v=XX7DwRH95sc')
+	const [videoUrl, setVideoUrl] = useState('')
 	const [playerUrl, setPlayerUrl] = useState('')
-	const [isPlaying, setIsPlaying] = useState(false)
+	const [isPlaying, setIsPlaying] = useState(true)
 	const player = useRef(null)
 
 	useEffect(() => {
 		socket.on('innitialState', (data) => {
-			const { lastTimestamp, isPlaying} = data
-			console.log('AAAAAAAAAAAAAAAAAA', data)
-			setIsPlaying(isPlaying)
+			const { lastTimestamp, isPlaying } = data
+			console.log('innitialState', data)
 			player.current.seekTo(parseFloat(lastTimestamp))
+			setIsPlaying(isPlaying)
 		})
 
 		socket.on('urlChange', (data) => {
+			console.log('urlChange', data);
 			setPlayerUrl(data)
 			setIsPlaying(false)
 		})
 
 		socket.on('progress', (data) => {
-			//console.log('progress', data)
+			console.log('progress', data)
 			player.current.seekTo(parseFloat(data.playedSeconds))
 		})
 
@@ -67,8 +68,10 @@ export function VideoSlave() {
 	}
 
 	const handleOnReady = (props) => {
-		console.log('onReady');
-		socket.emit('onReady', props)
+		if(props) {
+			console.log('onReady', props);
+			socket.emit('onReady')
+		}
 	}
 
 	return (
@@ -89,6 +92,7 @@ export function VideoSlave() {
 				onPause={handleOnPause}
 				onProgress={handleOnProgress}
 				onReady={handleOnReady}
+				onError={error => console.log('error', error)}
 			/>
 		</div>
 		</>

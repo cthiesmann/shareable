@@ -6,12 +6,14 @@ import styles from './Video.module.css'
 const socket = io('/')
 
 export function Video(props) {
-	const { videoUrl, onVideoChange } = props
+	const { videoUrl, onVideoChange, roomId } = props
 	const [playerUrl, setPlayerUrl] = useState('')
 	const [isPlaying, setIsPlaying] = useState(true)
 	const player = useRef(null)
 
 	useEffect(() => {
+		socket.emit('onJoinRoom', roomId)
+		
 		socket.on('innitialState', (data) => {
 			const { lastTimestamp, isPlaying, history } = data
 			console.log('innitialState', data)

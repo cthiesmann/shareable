@@ -30,7 +30,6 @@ function Room() {
 
 	return (
 		<div className="Video">
-			<p>Room ID: {roomId}</p>
 			<SearchBar onUrlChange={setUrl} />
 			<Video roomId={roomId} videoUrl={url} onVideoChange={list => setHistoryList(list)} />
 			<History videoList={historyList} />

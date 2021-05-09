@@ -47,7 +47,6 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('onUpdateLastTimestamp', (data) => {
-		console.log(rooms);
 		if (data.playedSeconds > 0)
 			rooms[room].lastTimestamp = data.playedSeconds
 	})

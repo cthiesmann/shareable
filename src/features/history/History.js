@@ -11,7 +11,7 @@ export function History(props) {
 		<>
 			<div id='center'>
 				<ul>
-					{previousVideos.length > 0 && <h3 id='title'>Recently played:</h3>}
+					{previousVideos.length > 0 && <h3 id='recentlyPlayed'>Recently played:</h3>}
 					{previousVideos.map((video, index) => <VideoListElement video={video} />)}
 				</ul>
 			</div>

@@ -40,22 +40,22 @@ export function Video() {
 			setIsPlaying(true)
 		})
 	}, [])
-	
+
 	const handleUrlChange = (event) => {
 		socket.emit('onUrlChange', videoUrl)
 		event.preventDefault()
 	}
 
 	const handleOnPause = (props) => {
-		if(isPlaying === true) {
+		if (isPlaying === true) {
 			socket.emit('onPause', props)
 			socket.emit('onProgress', { playedSeconds: player.current.getCurrentTime() })
 			setIsPlaying(false)
 		}
 	}
-	
+
 	const handleOnPlay = (props) => {
-		if(isPlaying === false) {
+		if (isPlaying === false) {
 			socket.emit('onPlay', props)
 			socket.emit('onProgress', { playedSeconds: player.current.getCurrentTime() })
 			setIsPlaying(true)
@@ -68,33 +68,34 @@ export function Video() {
 	}
 
 	const handleOnReady = (props) => {
-		if(props) {
+		// Do not emit onReady when no video is set
+		if (props) {
 			socket.emit('onReady')
 		}
 	}
 
 	return (
 		<>
-		<form onSubmit={handleUrlChange}>
-			<input type="text" value={videoUrl} onChange={event => setVideoUrl(event.target.value)}/>
-			<input type="submit" value="Go!"/>
-		</form>
-		<div className={styles.wrapper}>
-			<ReactPlayer
-				ref={player} 
-				url={playerUrl}
-				playing={isPlaying}
-				controls={true}
-				width='100%'
-				height='100%'
-				className={styles.player}
-				onPlay={handleOnPlay}
-				onPause={handleOnPause}
-				onProgress={handleOnProgress}
-				onReady={handleOnReady}
-				onError={error => console.log('error', error)}
-			/>
-		</div>
+			<form onSubmit={handleUrlChange} className={styles.center}>  
+				<input type="text" placeholder="Enter video url..." value={videoUrl} onChange={event => setVideoUrl(event.target.value)} />
+				<button type="submit">Go!</button>
+			</form>
+			<div className={styles.playerWrapper}>
+				<ReactPlayer
+					ref={player}
+					url={playerUrl}
+					playing={isPlaying}
+					controls={true}
+					className={styles.reactPlayer}
+					width='100%'
+					height='100%'
+					onPlay={handleOnPlay}
+					onPause={handleOnPause}
+					onProgress={handleOnProgress}
+					onReady={handleOnReady}
+					onError={error => console.log('error', error)}
+				/>
+			</div>
 		</>
 	);
 }

@@ -1,10 +1,12 @@
 .App {
-  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #181818;
 }
 
-.App-header {
-  min-height: 100vh;
-  min-width: 100vh;
-  background-color: red;
-  
+.Video {
+	width: 50%;
 }

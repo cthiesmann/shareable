@@ -5,18 +5,19 @@ import styles from './Video.module.css'
 
 const socket = io('/')
 
-export function Video() {
-	const [videoUrl, setVideoUrl] = useState('')
+export function Video(props) {
+	const { videoUrl, onVideoChange } = props
 	const [playerUrl, setPlayerUrl] = useState('')
 	const [isPlaying, setIsPlaying] = useState(true)
 	const player = useRef(null)
 
 	useEffect(() => {
 		socket.on('innitialState', (data) => {
-			const { lastTimestamp, isPlaying } = data
+			const { lastTimestamp, isPlaying, history } = data
 			console.log('innitialState', data)
 			player.current.seekTo(parseFloat(lastTimestamp))
 			setIsPlaying(isPlaying)
+			if (history?.length) onVideoChange(history)
 		})
 
 		socket.on('urlChange', (data) => {
@@ -41,10 +42,9 @@ export function Video() {
 		})
 	}, [])
 
-	const handleUrlChange = (event) => {
-		socket.emit('onUrlChange', videoUrl)
-		event.preventDefault()
-	}
+	useEffect(() => {
+		if(videoUrl) socket.emit('onUrlChange', videoUrl)
+	}, [videoUrl])
 
 	const handleOnPause = (props) => {
 		if (isPlaying === true) {
@@ -76,10 +76,6 @@ export function Video() {
 
 	return (
 		<>
-			<form onSubmit={handleUrlChange} className={styles.center}>
-				<input type="text" placeholder="Enter video url..." value={videoUrl} onChange={(event) => setVideoUrl(event.target.value)} onFocus={(event) => event.target.select()}/>
-				<button type="submit">Go!</button>
-			</form>
 			<div className={styles.playerWrapper}>
 				<ReactPlayer
 					ref={player}

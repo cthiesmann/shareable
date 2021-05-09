@@ -1,0 +1,56 @@
+ul {
+	padding: 0;
+}
+
+li {
+	list-style-type: none;
+	display: flex;
+	margin: 5pt 0pt;
+}
+
+#thumbnail {
+	width: 168pt;
+	height: 94pt;
+	background-color: black;
+}
+
+#video-info {
+	margin-left: 5pt;
+	height: 100%;
+}
+
+#video-info p {
+	margin: 0pt 0pt 5pt 0pt;
+	width: 200pt;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+#title {
+	font-size: large;
+	font-weight: bold;
+}
+
+#video-info #title {
+	color: white;
+}
+
+#provider {
+	font-size: small;
+}
+
+#author {
+
+}
+
+#center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+a, u {
+    text-decoration: none;
+	color: inherit;
+}

@@ -48,6 +48,9 @@ Set ReactPlayer's width and height to 100% and wrap the player in a fixed aspect
 .playerWrapper {
 	position: relative;
 	background-color: black;
+	box-shadow: 0pt 0pt 4pt black;
+	border: 1pt solid;
+	border-radius: 2pt;
 	padding-top: 56.25% /* Player ratio: 100 / (1280 / 720) */
 }
 

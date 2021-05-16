@@ -16,7 +16,7 @@ export function SearchBar(props) {
 	}
 
 	return (
-		<form onSubmit={handleOnSubmit} className={styles.searchForm, styles.center}>
+		<form onSubmit={handleOnSubmit} className={[styles.searchForm, styles.center].join(' ')}>
 			<input type="text"
 				placeholder="Enter video url..."
 				value={videoUrl} onChange={(event) => setVideoUrl(event.target.value)}

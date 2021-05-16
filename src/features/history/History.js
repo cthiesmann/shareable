@@ -9,9 +9,9 @@ export function History(props) {
 
 	return (
 		<>
-			<div id='center'>
+			<div className={styles.center}>
 				<ul>
-					{previousVideos.length > 0 && <h3 id='recentlyPlayed'>Recently played:</h3>}
+					{previousVideos.length > 0 && <h3 className={styles.recentlyPlayed}>Recently played:</h3>}
 					{previousVideos.map((video, index) => <VideoListElement video={video} />)}
 				</ul>
 			</div>
@@ -40,13 +40,13 @@ const VideoListElement = (props) => {
 	}, [url])
 
 	return (
-		<a href={url} className='center' target='blank'>
+		<a href={url} className={styles.center} target='blank'>
 			<li>
-				<img id='thumbnail' src={thumbnail} alt={url}/>
-				<div id='video-info'>
-					<p id='title'>{title}</p>
-					<p id='author'>{author}</p>
-					<p id='provider'>{provider}</p>
+				<img className={styles.thumbnail} src={thumbnail} alt={url}/>
+				<div className={styles.videoInfo}>
+					<p className={styles.title}>{title}</p>
+					<p className={styles.author}>{author}</p>
+					<p className={styles.provider}>{provider}</p>
 				</div>
 			</li>
 		</a>

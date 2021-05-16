@@ -8,18 +8,18 @@ li {
 	margin: 5pt 0pt;
 }
 
-#thumbnail {
+.thumbnail {
 	width: 168pt;
 	height: 94pt;
 	background-color: black;
 }
 
-#video-info {
+.videoInfo {
 	margin-left: 5pt;
 	height: 100%;
 }
 
-#video-info p {
+.videoInfo p {
 	margin: 0pt 0pt 5pt 0pt;
 	width: 200pt;
 	overflow: hidden;
@@ -27,27 +27,27 @@ li {
 	text-overflow: ellipsis;
 }
 
-#recentlyPlayed {
+.recentlyPlayed {
 	font-size: large;
 	font-weight: bold;
 	margin: 5pt 0pt;
 }
 
-#title {
+.title {
 	color: white;
 	font-size: large;
 	font-weight: bold;
 }
 
-#provider {
+.provider {
 	font-size: small;
 }
 
-#author {
+.author {
 
 }
 
-#center {
+.center {
 	display: flex;
 	justify-content: center;
 	align-items: center;

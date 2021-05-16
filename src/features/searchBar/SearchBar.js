@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import styles from './SearchBar.css'
+import styles from './SearchBar.module.css'
 
 export function SearchBar(props) {
 	const { onUrlChange } = props
@@ -16,15 +16,15 @@ export function SearchBar(props) {
 	}
 
 	return (
-		<form onSubmit={handleOnSubmit} className='searchForm center'>
+		<form onSubmit={handleOnSubmit} className={styles.searchForm, styles.center}>
 			<input type="text"
 				placeholder="Enter video url..."
 				value={videoUrl} onChange={(event) => setVideoUrl(event.target.value)}
 				onFocus={(event) => event.target.select()}
-				className='searchInput'
+				className={styles.searchInput}
 				ref={searchBar}
 			/>
-			<button type="submit" className='searchButton'>Go!</button>
+			<button type="submit" className={styles.searchButton}>Go!</button>
 		</form>
 	)
 }

@@ -6,13 +6,12 @@ import { Tooltip } from '../tooltip/Tooltip'
 export function VideoList(props) {
 	const { list, title } = props
 	const previousVideos = list
-	console.log('video list', list);
 
 	return (
 		<div className={styles.center}>
 			<ul>
 				{previousVideos.length > 0 && <h3 className={styles.recentlyPlayed}>{title}</h3>}
-				{previousVideos.map((video, index) => <VideoListElement video={video} />)}
+				{previousVideos.map((video, index) => <VideoListElement key={index} video={video} />)}
 			</ul>
 		</div>
 	)
@@ -33,7 +32,6 @@ const VideoListElement = (props) => {
 			setTitle(title)
 			setAuthor(author_name)
 			setProvider(provider_name)
-			console.log(response.data);
 		}
 		fetchThumbnail()
 	}, [url])

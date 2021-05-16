@@ -1,6 +1,7 @@
-import styles from './History.css'
+import styles from './History.module.css'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { Tooltip } from '../tooltip/Tooltip'
 
 export function History(props) {
 	const { videoList } = props
@@ -44,7 +45,9 @@ const VideoListElement = (props) => {
 			<li>
 				<img className={styles.thumbnail} src={thumbnail} alt={url}/>
 				<div className={styles.videoInfo}>
-					<p className={styles.title}>{title}</p>
+					<Tooltip title={title}>
+						<p className={styles.title}>{title}</p>
+					</Tooltip>
 					<p className={styles.author}>{author}</p>
 					<p className={styles.provider}>{provider}</p>
 				</div>

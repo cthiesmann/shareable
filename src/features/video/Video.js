@@ -3,7 +3,7 @@ import styles from './Video.module.css'
 
 export function Video(props) {
 	const { videoUrl, isPlaying, playerRef } = props
-	const { handleOnPlay, handleOnPause, handleOnProgress, handleOnReady } = props.handler
+	const { play, pause, progress, ready } = props.handler
 
 	return (
 		<div className={styles.playerWrapper}>
@@ -15,10 +15,10 @@ export function Video(props) {
 				className={styles.reactPlayer}
 				width='100%'
 				height='100%'
-				onPlay={handleOnPlay}
-				onPause={handleOnPause}
-				onProgress={handleOnProgress}
-				onReady={handleOnReady}
+				onPlay={play}
+				onPause={pause}
+				onProgress={progress}
+				onReady={ready}
 			/>
 		</div>
 	);

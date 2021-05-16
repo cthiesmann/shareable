@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect, Link } from 'react-router-dom'
 import { Room } from './features/room/Room'
 import Readable from 'readable-url-names'
 import './App.css'
@@ -9,8 +9,11 @@ function App() {
 	return (
 		<div className="App">
 			<Router>
+				<Link to='/'>New Room</Link>
 				<Switch>
-					<Route path='/:roomId'><Room /></Route>
+					<Route path='/:roomId'>
+						<Room/>
+					</Route>
 					<Route path='/'>
 						<Redirect to={{ pathname: '/' + generator.generate() }} />
 					</Route>

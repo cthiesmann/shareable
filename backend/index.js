@@ -71,9 +71,11 @@ io.on('connection', (socket) => {
 	socket.on('disconnect', (reason) => {
 		console.log(socket.id, 'disconnected', reason);
 		// Remove this socket from the list of connected sockets
-		rooms[room].connectedSockets = rooms[room].connectedSockets.filter(socketId => socketId !== socket.id)
-		// Delete room state if room is empty
-		if (rooms[room].connectedSockets.length === 0) delete rooms[room]
+		if (rooms[room] && rooms[room].connectedSockets) {
+			rooms[room].connectedSockets = rooms[room].connectedSockets.filter(socketId => socketId !== socket.id)
+			// Delete room state if room is empty
+			if (rooms[room].connectedSockets.length === 0) delete rooms[room]
+		}
 	})
 })
 

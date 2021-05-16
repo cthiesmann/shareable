@@ -4,19 +4,17 @@ import { useEffect, useState } from 'react'
 import { Tooltip } from '../tooltip/Tooltip'
 
 export function VideoList(props) {
-	const { videoList, title } = props
-	const previousVideos = videoList
-	console.log('video list', videoList);
+	const { list, title } = props
+	const previousVideos = list
+	console.log('video list', list);
 
 	return (
-		<>
-			<div className={styles.center}>
-				<ul>
-					{previousVideos.length > 0 && <h3 className={styles.recentlyPlayed}>{title}</h3>}
-					{previousVideos.map((video, index) => <VideoListElement video={video} />)}
-				</ul>
-			</div>
-		</>
+		<div className={styles.center}>
+			<ul>
+				{previousVideos.length > 0 && <h3 className={styles.recentlyPlayed}>{title}</h3>}
+				{previousVideos.map((video, index) => <VideoListElement video={video} />)}
+			</ul>
+		</div>
 	)
 }
 
@@ -43,7 +41,7 @@ const VideoListElement = (props) => {
 	return (
 		<a href={url} className={styles.center} target='blank'>
 			<li>
-				<img className={styles.thumbnail} src={thumbnail} alt={url}/>
+				<img className={styles.thumbnail} src={thumbnail} alt={url} />
 				<div className={styles.videoInfo}>
 					<Tooltip title={title}>
 						<p className={styles.title}>{title}</p>

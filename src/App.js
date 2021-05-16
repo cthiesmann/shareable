@@ -1,8 +1,5 @@
-import { useState } from 'react'
-import { Video } from './features/video/Video'
-import { VideoList } from './features/videoList/VideoList'
-import { SearchBar } from './features/searchBar/SearchBar'
-import { BrowserRouter as Router, Switch, Route, Redirect, useParams } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import { Room } from './features/room/Room'
 import Readable from 'readable-url-names'
 import './App.css'
 
@@ -21,20 +18,6 @@ function App() {
 			</Router>
 		</div>
 	);
-}
-
-function Room() {
-	let { roomId } = useParams()
-	const [url, setUrl] = useState('')
-	const [historyList, setHistoryList] = useState([])
-
-	return (
-		<div className="Video">
-			<SearchBar onUrlChange={setUrl} />
-			<Video roomId={roomId} videoUrl={url} onVideoChange={list => setHistoryList(list)} />
-			<VideoList title={'Recently played:'} videoList={historyList} />
-		</div>
-	)
 }
 
 export default App

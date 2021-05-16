@@ -1,10 +1,10 @@
-import styles from './History.module.css'
+import styles from './VideoList.module.css'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { Tooltip } from '../tooltip/Tooltip'
 
-export function History(props) {
-	const { videoList } = props
+export function VideoList(props) {
+	const { videoList, title } = props
 	const previousVideos = videoList
 	console.log('video list', videoList);
 
@@ -12,7 +12,7 @@ export function History(props) {
 		<>
 			<div className={styles.center}>
 				<ul>
-					{previousVideos.length > 0 && <h3 className={styles.recentlyPlayed}>Recently played:</h3>}
+					{previousVideos.length > 0 && <h3 className={styles.recentlyPlayed}>{title}</h3>}
 					{previousVideos.map((video, index) => <VideoListElement video={video} />)}
 				</ul>
 			</div>

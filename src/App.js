@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Video } from './features/video/Video'
-import { History } from './features/history/History'
+import { VideoList } from './features/videoList/VideoList'
 import { SearchBar } from './features/searchBar/SearchBar'
 import { BrowserRouter as Router, Switch, Route, Redirect, useParams } from 'react-router-dom'
 import Readable from 'readable-url-names'
@@ -32,7 +32,7 @@ function Room() {
 		<div className="Video">
 			<SearchBar onUrlChange={setUrl} />
 			<Video roomId={roomId} videoUrl={url} onVideoChange={list => setHistoryList(list)} />
-			<History videoList={historyList} />
+			<VideoList title={'Recently played:'} videoList={historyList} />
 		</div>
 	)
 }

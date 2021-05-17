@@ -19,15 +19,19 @@ io.on('connection', (socket) => {
 			rooms = {
 				...rooms,
 				[roomId]: {
-					videoUrl: 'https://www.youtube.com/watch?v=zUJ9TLAlT4A',
-					lastTimestamp: 0.999,
+					videoUrl: '',
+					lastTimestamp: 0.0,
 					isPlaying: true,
 					history: [],
-					queue: ['https://www.youtube.com/watch?v=BDk4isFHtqo'],
+					queue: [],
 					connectedSockets: [],
+					deletionTimeout: null,
 				},
 			}
 		}
+		// Stop room state deletion timeout
+		if(rooms[room].deletionTimeout) clearTimeout(rooms[room].deletionTimeout)
+		// Add this socket to the list of connected sockets
 		rooms[room].connectedSockets = [...rooms[room].connectedSockets, socket.id]
 		console.log(socket.id, 'joined', room);
 		socket.join(room)
@@ -110,8 +114,12 @@ io.on('connection', (socket) => {
 		// Remove this socket from the list of connected sockets
 		if (rooms[room] && rooms[room].connectedSockets) {
 			rooms[room].connectedSockets = rooms[room].connectedSockets.filter(socketId => socketId !== socket.id)
-			// Delete room state if room is empty
-			if (rooms[room].connectedSockets.length === 0) delete rooms[room]
+			// Delete room state after x seconds if room is empty
+			if (rooms[room].connectedSockets.length === 0) {
+				rooms[room].deletionTimeout = setTimeout(() => {
+					delete rooms[room]
+				}, 5000)
+			}
 		}
 	})
 })

@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import styles from './SearchBar.module.css'
+import ReactTooltip from 'react-tooltip';
+
 
 export function SearchBar(props) {
-	const { onUrlChange } = props
+	const { onUrlChange, onQueueAdd } = props
 	const [videoUrl, setVideoUrl] = useState('')
 	const searchBar = useRef(null)
 
@@ -15,6 +17,11 @@ export function SearchBar(props) {
 		if (onUrlChange) onUrlChange(videoUrl)
 	}
 
+	const handleOnQueue = (event) => {
+		event.preventDefault()
+		if (onQueueAdd) onQueueAdd(videoUrl)
+	}
+
 	return (
 		<form onSubmit={handleOnSubmit} className={[styles.searchForm, styles.center].join(' ')}>
 			<input type="text"
@@ -24,7 +31,9 @@ export function SearchBar(props) {
 				className={styles.searchInput}
 				ref={searchBar}
 			/>
-			<button type="submit" className={styles.searchButton}>Go!</button>
+			<button onClick={handleOnQueue} className={styles.searchButton} data-tip='Add to queue'>Q</button>
+			<button type="submit" className={styles.searchButton} data-tip='Play video now'>Go!</button>
+			<ReactTooltip place='bottom'/>
 		</form>
 	)
 }

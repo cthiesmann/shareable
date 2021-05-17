@@ -1,36 +1,49 @@
+* {
+	overflow: hidden;
+}
+
+a, u {
+    text-decoration: none;
+	color: inherit;
+}
+
 ul {
 	padding: 0;
+	margin: 0;
 }
 
 li {
-	list-style-type: none;
-	display: flex;
-	margin: 5pt 0pt;
+	margin: 0;
+	margin-bottom: 5pt;
+}
+
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(168px, auto));
+	align-items: start;
+	gap: 5pt;
+	box-sizing: border-box;
 }
 
 .thumbnail {
-	width: 168pt;
-	height: 94pt;
-	background-color: black;
+	object-fit: cover;
+	object-position: center;
+	width: 168px;
+	height: 94px;
+	overflow: hidden;
 }
 
 .videoInfo {
-	margin-left: 5pt;
-	height: 100%;
+	overflow: hidden;
 }
 
 .videoInfo p {
-	margin: 0pt 0pt 5pt 0pt;
-	width: 200pt;
+	margin: 0;
+	padding: 0 0 5pt 0;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-}
-
-.recentlyPlayed {
-	font-size: large;
-	font-weight: bold;
-	margin: 5pt 0pt;
 }
 
 .title {
@@ -45,15 +58,4 @@ li {
 
 .author {
 
-}
-
-.center {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-a, u {
-    text-decoration: none;
-	color: inherit;
 }

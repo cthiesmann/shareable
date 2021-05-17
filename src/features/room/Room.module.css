@@ -1,5 +1,45 @@
-.Video {
-	width: 50%;
-	height: 100%;
-	max-width: 50%;
+.grid {
+	display: grid;
+	grid-template-columns: [queue] 25% 10pt [main] auto 10pt [history] 25%;
+	grid-template-rows: auto 10pt auto;
+	align-items: start;
+	justify-items: stretch;
+}
+
+.queueTitle, .historyTitle {
+	margin: 0;
+	padding: 0;
+	font-size: large;
+	font-weight: bold;
+	align-self: end;
+}
+
+.queueTitle {
+	grid-column-start: queue;
+	grid-row-start: 1;
+}
+
+.queue {
+	grid-column-start: queue;
+	grid-row-start: 3;
+}
+
+.search {
+	grid-column-start: main;
+	grid-row-start: 1;
+}
+
+.video {
+	grid-column-start: main;
+	grid-row-start: 3;
+}
+
+.historyTitle {
+	grid-column-start: history;
+	grid-row-start: 1;
+}
+
+.history {
+	grid-column-start: history;
+	grid-row-start: 3;
 }

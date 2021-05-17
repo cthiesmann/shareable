@@ -9,7 +9,6 @@ function App() {
 	return (
 		<div className="App">
 			<Router>
-				<Link to='/'>New Room</Link>
 				<Switch>
 					<Route path='/:roomId'>
 						<Room/>

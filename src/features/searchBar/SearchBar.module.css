@@ -5,14 +5,15 @@
 	align-items: center;
 }
 
-.searchInput, .searchButton {
+.searchInput, .searchButton, .queueButton {
     -moz-box-sizing: content-box;
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
 	height: 30pt;
+	min-width: 30pt;
 	border: 1pt solid #4D4D4D;
 	font-size: large;
-	margin: 10pt 0pt;
+	margin: 0;
 }
 
 .searchInput {
@@ -20,7 +21,6 @@
 	color: white;
 	border-radius: 2pt 0pt 0pt 2pt;
 	width: 100%;
-	margin-right: -1pt;
 	padding-left: 10pt;
 }
 
@@ -29,9 +29,16 @@
 	outline:none;
 }
 
+.queueButton {
+	background-color: #181818;
+	color: #7F8989;
+	margin-left: -1pt;
+}
+
 .searchButton {
 	background-color: #181818;
 	color: #7F8989;
+	margin-left: -1pt;
 	border-radius: 0pt 2pt 2pt 0pt;
 }
 

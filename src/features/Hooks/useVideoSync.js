@@ -5,6 +5,7 @@ const useVideoSync = (roomId, playerRef) => {
 	const [videoUrl, setVideoUrl] = useState('')
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [history, setHistory] = useState([])
+	const [queue, setQueue] = useState([])
 
 	const ref = useRef()
 
@@ -12,23 +13,20 @@ const useVideoSync = (roomId, playerRef) => {
 		const socket = io('/')
 		ref.current = socket
 
-		// Join current room
-		console.log('joining ', roomId)
-		socket.emit('onJoinRoom', roomId)
-
 		// Listen to events
 		socket.on('innitialState', (innitialState) => {
-			const { lastTimestamp, isPlaying, history } = innitialState
+			const { lastTimestamp, isPlaying } = innitialState
 			console.log('innitialState', innitialState)
 			playerRef?.current.seekTo(parseFloat(lastTimestamp))
 			setIsPlaying(isPlaying)
-			if (history?.length) setHistory(history)
 		})
 
 		socket.on('urlChange', (url) => {
 			console.log('urlChange', url);
 			setVideoUrl(url)
 			setIsPlaying(false)
+			// Manually send onReady to complete onJoinRoom -> urlChange -> onReady -> innitialState handshake if no url is set for the current room
+			if (!url) ref.current.emit('onReady')
 		})
 
 		socket.on('progress', (progress) => {
@@ -46,6 +44,23 @@ const useVideoSync = (roomId, playerRef) => {
 			setIsPlaying(false)
 		})
 
+		socket.on('history', (history) => {
+			console.log('history', history)
+			setHistory(history)
+		})
+
+		socket.on('queue', (queue) => {
+			console.log('queue', queue)
+			setQueue(queue)
+		})
+		
+		// Join current room
+		console.log('joining ', roomId)
+		socket.emit('onJoinRoom', roomId)
+		// Get history & queue
+		socket.emit('onQueue')
+		socket.emit('onHistory')
+
 		// Close connection
 		return () => {
 			console.log('disconnecting');
@@ -58,18 +73,23 @@ const useVideoSync = (roomId, playerRef) => {
 		if (url) ref.current.emit('onUrlChange', url)
 	}
 
+	const addToQueue = (url) => {
+		console.log('onQueueAdd', url);
+		if (url) ref.current.emit('onQueueAdd', url)
+	}
+
 	const pause = () => {
 		if (isPlaying === true) {
-			// Pause before changing progress so there is no pause > play > pause artifacts
+			// Pause before changing progress so there is no pause -> play -> pause artifacts
 			ref.current.emit('onPause')
 			ref.current.emit('onProgress', { playedSeconds: playerRef?.current.getCurrentTime() })
 			setIsPlaying(false)
 		}
 	}
-	
+
 	const play = () => {
 		if (isPlaying === false) {
-			// Play after changing progress so there is no play > pause > play artifacts
+			// Play after changing progress so there is no play -> pause -> play artifacts
 			ref.current.emit('onProgress', { playedSeconds: playerRef?.current.getCurrentTime() })
 			ref.current.emit('onPlay')
 			setIsPlaying(true)
@@ -92,7 +112,9 @@ const useVideoSync = (roomId, playerRef) => {
 		videoUrl,
 		isPlaying,
 		history,
+		queue,
 		changeUrl,
+		addToQueue,
 		pause,
 		play,
 		progress,

@@ -1,19 +1,16 @@
 import styles from './VideoList.module.css'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { Tooltip } from '../tooltip/Tooltip'
+import ReactTooltip from 'react-tooltip'
 
 export function VideoList(props) {
 	const { list, title } = props
 	const previousVideos = list
 
 	return (
-		<div className={styles.center}>
-			<ul>
-				{previousVideos.length > 0 && <h3 className={styles.recentlyPlayed}>{title}</h3>}
-				{previousVideos.map((video, index) => <VideoListElement key={index} video={video} />)}
-			</ul>
-		</div>
+		<ul>
+			{previousVideos.map((video, index) => <VideoListElement key={index} video={video} />)}
+		</ul>
 	)
 }
 
@@ -37,15 +34,14 @@ const VideoListElement = (props) => {
 	}, [url])
 
 	return (
-		<a href={url} className={styles.center} target='blank'>
-			<li>
+		<a href={url} target='blank'>
+			<li className={styles.grid}>
 				<img className={styles.thumbnail} src={thumbnail} alt={url} />
 				<div className={styles.videoInfo}>
-					<Tooltip title={title}>
-						<p className={styles.title}>{title}</p>
-					</Tooltip>
+					<p className={styles.title} data-tip={title}>{title}</p>
 					<p className={styles.author}>{author}</p>
 					<p className={styles.provider}>{provider}</p>
+					<ReactTooltip place='bottom'/>
 				</div>
 			</li>
 		</a>

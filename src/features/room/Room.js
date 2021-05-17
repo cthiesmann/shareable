@@ -1,5 +1,5 @@
 import styles from './Room.module.css'
-import { useState, useRef } from 'react'
+import { useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { Video } from '../video/Video'
 import { VideoList } from '../videoList/VideoList'
@@ -8,15 +8,16 @@ import useVideoSync from '../Hooks/useVideoSync'
 
 export function Room() {
 	const { roomId } = useParams()
-	const [queueList, setQueueList] = useState(['https://www.youtube.com/watch?v=zUJ9TLAlT4A', 'https://youtu.be/BDk4isFHtqo'])
 
 	const playerRef = useRef(null)
-	
+
 	const {
 		videoUrl,
 		isPlaying,
 		history,
+		queue,
 		changeUrl,
+		addToQueue,
 		pause,
 		play,
 		progress,
@@ -24,11 +25,21 @@ export function Room() {
 	} = useVideoSync(roomId, playerRef)
 
 	return (
-		<div className={styles.Video}>
-			<SearchBar onUrlChange={changeUrl} />
-			<Video videoUrl={videoUrl} isPlaying={isPlaying} playerRef={playerRef} handler={{ play, pause, progress, ready }}/>
-			<VideoList title={'Recently played:'} list={history} />
-			<VideoList title={'Queue:'} list={queueList} />
+		<div className={styles.grid}>
+			<div className={styles.search}>
+				<SearchBar onUrlChange={changeUrl} onQueueAdd={addToQueue} />
+			</div>
+			<div className={styles.video}>
+				<Video videoUrl={videoUrl} isPlaying={isPlaying} playerRef={playerRef} handler={{ play, pause, progress, ready }} />
+			</div>
+			<h3 className={styles.queueTitle}>Queue:</h3>
+			<div className={styles.queue}>
+				<VideoList title={'Queue:'} list={queue} />
+			</div>
+			<h3 className={styles.historyTitle}>History:</h3>
+			<div className={styles.history}>
+				<VideoList title={'Recently played:'} list={history} />
+			</div>
 		</div>
 	)
 }

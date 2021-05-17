@@ -29,15 +29,18 @@ export function Room() {
 			<div className={styles.search}>
 				<SearchBar onUrlChange={changeUrl} onQueueAdd={addToQueue} />
 			</div>
+
 			<div className={styles.video}>
 				<Video videoUrl={videoUrl} isPlaying={isPlaying} playerRef={playerRef} handler={{ play, pause, progress, ready }} />
 			</div>
-			<h3 className={styles.queueTitle}>Queue:</h3>
+
 			<div className={styles.queue}>
+				{queue.length > 0 && <h3 className={styles.queueTitle}>Queue:</h3>}
 				<VideoList title={'Queue:'} list={queue} />
 			</div>
-			<h3 className={styles.historyTitle}>History:</h3>
+			
 			<div className={styles.history}>
+				{history.length > 0 && <h3 className={styles.historyTitle}>History:</h3>}
 				<VideoList title={'Recently played:'} list={history} />
 			</div>
 		</div>

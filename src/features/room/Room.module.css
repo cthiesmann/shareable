@@ -1,9 +1,13 @@
-.grid {
-	display: grid;
-	grid-template-columns: [queue] 25% 10pt [main] auto 10pt [history] 25%;
-	grid-template-rows: auto 10pt auto;
-	align-items: start;
-	justify-items: stretch;
+
+
+@media (min-width: 1200px) {
+	.grid {
+		display: grid;
+		grid-template-columns: [queue] 25% 10pt [main] auto 10pt [history] 25%;
+		grid-template-rows: auto 10pt auto;
+		align-items: start;
+		justify-items: stretch;
+	}
 }
 
 .queueTitle, .historyTitle {
@@ -12,6 +16,7 @@
 	font-size: large;
 	font-weight: bold;
 	align-self: end;
+	padding-bottom: 5pt;
 }
 
 .queueTitle {

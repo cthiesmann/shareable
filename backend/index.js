@@ -26,11 +26,15 @@ io.on('connection', (socket) => {
 					queue: [],
 					connectedSockets: [],
 					deletionTimeout: null,
+					videoEnded: true,
 				},
 			}
 		}
 		// Stop room state deletion timeout
-		if(rooms[room].deletionTimeout) clearTimeout(rooms[room].deletionTimeout)
+		if(rooms[room].deletionTimeout) {
+			clearTimeout(rooms[room].deletionTimeout)
+			rooms[room].deletionTimeout = null
+		}
 		// Add this socket to the list of connected sockets
 		rooms[room].connectedSockets = [...rooms[room].connectedSockets, socket.id]
 		console.log(socket.id, 'joined', room);
@@ -43,20 +47,35 @@ io.on('connection', (socket) => {
 		socket.emit('innitialState', { ...rooms[room] })
 	})
 
-	socket.on('onUrlChange', (data) => {
-		console.log(socket.id, room, 'onUrlChange', data)
+	socket.on('onUrlChange', (url) => {
+		console.log(socket.id, room, 'onUrlChange', url)
 		// Update history
 		if (rooms[room].videoUrl !== '') rooms[room].history = [rooms[room].videoUrl, ...rooms[room].history].slice(0, 10)
 		// Update current video url
-		rooms[room].videoUrl = data
+		rooms[room].videoUrl = url
 		// Reset timestamp to 0.0s
 		rooms[room].lastTimestamp = 0.0
-		io.to(room).emit('urlChange', data)
+		rooms[room].videoEnded = false
+		io.to(room).emit('urlChange', url)
 	})
 
 	socket.on('onQueueAdd', (url) => {
-		rooms[room].queue = [...rooms[room].queue, url]
-		io.to(room).emit('queue', rooms[room].queue)
+		// If no videos are in queue and current video ended
+		if(rooms[room].videoEnded) {
+			// Update history
+			if (rooms[room].videoUrl !== '') rooms[room].history = [rooms[room].videoUrl, ...rooms[room].history].slice(0, 10)
+			// Update current video url
+			rooms[room].videoUrl = url
+			// Reset timestamp to 0.0s
+			rooms[room].lastTimestamp = 0.0
+			rooms[room].videoEnded = false
+			io.to(room).emit('urlChange', url)
+		}
+		// Else just add this url to the queue
+		else {
+			rooms[room].queue = [...rooms[room].queue, url]
+			io.to(room).emit('queue', rooms[room].queue)
+		}
 	})
 
 	socket.on('onUpdateLastTimestamp', (data) => {
@@ -66,12 +85,14 @@ io.on('connection', (socket) => {
 			if (rooms[room]) rooms[room].lastTimestamp = data.playedSeconds
 			if (data.loaded >= 0.999 && (data.loadedSeconds -1 <= data.playedSeconds)) {
 				console.log(room, 'video ended')
+				rooms[room].videoEnded = true
 				// Add current videoUrl to history
 				if (rooms[room].videoUrl !== '') rooms[room].history = [rooms[room].videoUrl, ...rooms[room].history].slice(0, 10)
 				// Change videoUrl to 1st in queue
-				rooms[room].videoUrl = rooms[room].queue[0]
+				rooms[room].videoUrl = rooms[room].queue[0] || ''
 				// Reset timestamp to 0.0s
 				rooms[room].lastTimestamp = 0.0
+				if (rooms[room].videoUrl !== '') rooms[room].videoEnded = false
 				// Remove video from queue
 				rooms[room].queue = rooms[room].queue.slice(1)
 				// Notify clients

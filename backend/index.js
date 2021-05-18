@@ -75,6 +75,7 @@ io.on('connection', (socket) => {
 		rooms[room].lastTimestamp = 0.0
 		rooms[room].videoEnded = false
 		io.to(room).emit(client.setUrl, url)
+		socket.emit(client.setHistory, rooms[room].history)
 	})
 
 	on(server.addToQueue, (url) => {

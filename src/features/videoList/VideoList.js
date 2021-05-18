@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 
 export function VideoList(props) {
-	const { list, title } = props
+	const { list } = props
 	const previousVideos = list
 
 	return (

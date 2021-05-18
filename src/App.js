@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Switch, Route, Redirect, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import { Room } from './features/room/Room'
 import Readable from 'readable-url-names'
 import './App.css'

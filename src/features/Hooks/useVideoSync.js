@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import io from 'socket.io-client'
+import { client, server } from './events'
 
 const useVideoSync = (roomId, playerRef) => {
 	const [videoUrl, setVideoUrl] = useState('')
@@ -13,55 +14,59 @@ const useVideoSync = (roomId, playerRef) => {
 		const socket = io('/')
 		ref.current = socket
 
+		// Wrapper for socket.on to automatically log incoming events
+		const on = (event, callback) => {
+			socket.on(event, (data) => {
+				if (data) console.log(event.split('/')[1] || event, data)
+				else	  console.log(event.split('/')[1] || event)
+				callback(data)
+			})
+		}
+
 		// Listen to events
-		socket.on('innitialState', (innitialState) => {
+		on(client.innitialState, (innitialState) => {
 			const { lastTimestamp, isPlaying } = innitialState
-			console.log('innitialState', innitialState)
 			playerRef?.current.seekTo(parseFloat(lastTimestamp))
 			setIsPlaying(isPlaying)
 		})
 
-		socket.on('urlChange', (url) => {
-			console.log('urlChange', url);
+		on(client.setUrl, (url) => {
 			setVideoUrl(url)
 			setIsPlaying(false)
 			// Manually send onReady to complete onJoinRoom -> urlChange -> onReady -> innitialState handshake if no url is set for the current room
-			if (!url) ref.current.emit('onReady')
+			if (!url) ref.current.emit(server.ready)
 		})
 
-		socket.on('progress', (progress) => {
-			console.log('progress', progress)
+		on(client.setProgress, (progress) => {
 			playerRef?.current.seekTo(parseFloat(progress.playedSeconds))
 		})
 
-		socket.on('play', () => {
-			console.log('play')
+		on(client.play, () => {
 			setIsPlaying(true)
 		})
 
-		socket.on('pause', () => {
-			console.log('pause')
+		on(client.pause, () => {
 			setIsPlaying(false)
 		})
 
-		socket.on('history', (history) => {
-			console.log('history', history)
+		on(client.setHistory, (history) => {
 			setHistory(history)
 		})
 
-		socket.on('queue', (queue) => {
-			console.log('queue', queue)
+		on(client.setQueue, (queue) => {
 			setQueue(queue)
 		})
-		
-		// Join current room
-		console.log('joining ', roomId)
-		socket.emit('onJoinRoom', roomId)
-		// Get history & queue
-		socket.emit('onQueue')
-		socket.emit('onHistory')
 
-		// Close connection
+		socket.on('connect', () => {
+			// Join current room
+			console.log('connecting to', roomId)
+			socket.emit(server.joinRoom, roomId)
+			// Get history & queue
+			socket.emit(server.getQueue)
+			socket.emit(server.getHistory)
+		})
+
+		// Close connection when component unmounts
 		return () => {
 			console.log('disconnecting');
 			socket.disconnect()
@@ -70,19 +75,19 @@ const useVideoSync = (roomId, playerRef) => {
 
 	const changeUrl = (url) => {
 		setVideoUrl(url)
-		if (url) ref.current.emit('onUrlChange', url)
+		if (url) ref.current.emit(server.changeUrl, url)
 	}
 
 	const addToQueue = (url) => {
-		console.log('onQueueAdd', url);
-		if (url) ref.current.emit('onQueueAdd', url)
+		console.log(server.addToQueue, url);
+		if (url) ref.current.emit(server.addToQueue, url)
 	}
 
 	const pause = () => {
 		if (isPlaying === true) {
 			// Pause before changing progress so there is no pause -> play -> pause artifacts
-			ref.current.emit('onPause')
-			ref.current.emit('onProgress', { playedSeconds: playerRef?.current.getCurrentTime() })
+			ref.current.emit(server.pause)
+			ref.current.emit(server.progress, { playedSeconds: playerRef?.current.getCurrentTime() })
 			setIsPlaying(false)
 		}
 	}
@@ -90,21 +95,21 @@ const useVideoSync = (roomId, playerRef) => {
 	const play = () => {
 		if (isPlaying === false) {
 			// Play after changing progress so there is no play -> pause -> play artifacts
-			ref.current.emit('onProgress', { playedSeconds: playerRef?.current.getCurrentTime() })
-			ref.current.emit('onPlay')
+			ref.current.emit(server.progress, { playedSeconds: playerRef?.current.getCurrentTime() })
+			ref.current.emit(server.play)
 			setIsPlaying(true)
 		}
 	}
 
 	const progress = (progress) => {
 		// Keep the server updated at what time we are
-		ref.current.emit('onUpdateLastTimestamp', progress)
+		ref.current.emit(server.setLastKnownProgress, progress)
 	}
 
 	const ready = (state) => {
 		// Do not emit onReady when no video is set
 		if (state) {
-			ref.current.emit('onReady')
+			ref.current.emit(server.ready)
 		}
 	}
 

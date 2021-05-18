@@ -3,6 +3,7 @@ const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const express = require('express')
 const path = require('path')
+const { client, server } = require('../src/features/Hooks/events')
 
 const port = process.env.PORT || 80
 
@@ -12,7 +13,27 @@ io.on('connection', (socket) => {
 	console.log(socket.id, 'connected');
 	let room = undefined
 
-	socket.on('onJoinRoom', (roomId) => {
+	// Wrapper for socket.on to automatically log incoming events
+	const on = (event, callback) => {
+		socket.on(event, (data) => {
+			const info = [
+				socket.id,
+				room,
+				event.split('/')[1] || event,
+				data
+			]
+			// Remove empty items
+			.filter(item => item !== undefined)
+			// Transform to string
+			.join(' ')
+
+			if (event !== server.setLastKnownProgress) // Ignore that one spammy event
+				console.log(info)
+			callback(data)
+		})
+	}
+
+	on(server.joinRoom, (roomId) => {
 		room = roomId
 		// Create room state if it doesn't exist yet
 		if (!rooms[roomId]) {
@@ -37,18 +58,15 @@ io.on('connection', (socket) => {
 		}
 		// Add this socket to the list of connected sockets
 		rooms[room].connectedSockets = [...rooms[room].connectedSockets, socket.id]
-		console.log(socket.id, 'joined', room);
 		socket.join(room)
-		socket.emit('urlChange', rooms[room].videoUrl)
+		socket.emit(client.setUrl, rooms[room].videoUrl)
 	})
 
-	socket.on('onReady', () => {
-		console.log(socket.id, 'onReady', { lastTimestamp: rooms[room].lastTimestamp, isPlaying: rooms[room].isPlaying });
-		socket.emit('innitialState', { ...rooms[room] })
+	on(server.ready, () => {
+		socket.emit(client.innitialState, { ...rooms[room] })
 	})
 
-	socket.on('onUrlChange', (url) => {
-		console.log(socket.id, room, 'onUrlChange', url)
+	on(server.changeUrl, (url) => {
 		// Update history
 		if (rooms[room].videoUrl !== '') rooms[room].history = [rooms[room].videoUrl, ...rooms[room].history].slice(0, 10)
 		// Update current video url
@@ -56,10 +74,10 @@ io.on('connection', (socket) => {
 		// Reset timestamp to 0.0s
 		rooms[room].lastTimestamp = 0.0
 		rooms[room].videoEnded = false
-		io.to(room).emit('urlChange', url)
+		io.to(room).emit(client.setUrl, url)
 	})
 
-	socket.on('onQueueAdd', (url) => {
+	on(server.addToQueue, (url) => {
 		// If no videos are in queue and current video ended
 		if(rooms[room].videoEnded) {
 			// Update history
@@ -69,17 +87,16 @@ io.on('connection', (socket) => {
 			// Reset timestamp to 0.0s
 			rooms[room].lastTimestamp = 0.0
 			rooms[room].videoEnded = false
-			io.to(room).emit('urlChange', url)
+			io.to(room).emit(client.setUrl, url)
 		}
 		// Else just add this url to the queue
 		else {
 			rooms[room].queue = [...rooms[room].queue, url]
-			io.to(room).emit('queue', rooms[room].queue)
+			io.to(room).emit(client.setQueue, rooms[room].queue)
 		}
 	})
 
-	socket.on('onUpdateLastTimestamp', (data) => {
-		console.log(data);
+	on(server.setLastKnownProgress, (data) => {
 		// Make sure newly joining clients don't reset the timestamp
 		if (data.playedSeconds > 0.0) {
 			if (rooms[room]) rooms[room].lastTimestamp = data.playedSeconds
@@ -96,42 +113,37 @@ io.on('connection', (socket) => {
 				// Remove video from queue
 				rooms[room].queue = rooms[room].queue.slice(1)
 				// Notify clients
-				io.to(room).emit('urlChange', rooms[room].videoUrl)
-				io.to(room).emit('history', rooms[room].history)
-				io.to(room).emit('queue', rooms[room].queue)
+				io.to(room).emit(client.setUrl, rooms[room].videoUrl)
+				io.to(room).emit(client.setHistory, rooms[room].history)
+				io.to(room).emit(client.setQueue, rooms[room].queue)
 
 			}
 		}
-		console.log(rooms[room]);
 	})
 
-	socket.on('onProgress', (data) => {
-		console.log(socket.id, room, 'onProgress', data.playedSeconds)
-		socket.broadcast.to(room).emit('progress', data)
+	on(server.progress, (data) => {
+		socket.broadcast.to(room).emit(client.setProgress, data)
 	})
 
-	socket.on('onPause', () => {
-		console.log(socket.id, room, 'onPause')
-		socket.broadcast.to(room).emit('pause')
+	on(server.pause, () => {
+		socket.broadcast.to(room).emit(client.pause)
 		rooms[room].isPlaying = false
 	})
 
-	socket.on('onPlay', () => {
-		console.log(socket.id, room, 'onPlay')
-		socket.broadcast.to(room).emit('play')
+	on(server.play, () => {
+		socket.broadcast.to(room).emit(client.play)
 		rooms[room].isPlaying = true
 	})
 
-	socket.on('onHistory', () => {
-		socket.emit('history', rooms[room].history)
+	on(server.getHistory, () => {
+		socket.emit(client.setHistory, rooms[room].history)
 	})
 
-	socket.on('onQueue', () => {
-		socket.emit('queue', rooms[room].queue)
+	on(server.getQueue, () => {
+		socket.emit(client.setQueue, rooms[room].queue)
 	})
 
-	socket.on('disconnect', (reason) => {
-		console.log(socket.id, 'disconnected', reason);
+	on('disconnect', (reason) => {
 		// Remove this socket from the list of connected sockets
 		if (rooms[room] && rooms[room].connectedSockets) {
 			rooms[room].connectedSockets = rooms[room].connectedSockets.filter(socketId => socketId !== socket.id)

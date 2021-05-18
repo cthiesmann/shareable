@@ -63,7 +63,7 @@ io.on('connection', (socket) => {
 	})
 
 	on(server.ready, () => {
-		socket.emit(client.innitialState, { ...rooms[room] })
+		socket.emit(client.setInitialState, rooms[room])
 	})
 
 	on(server.changeUrl, (url) => {

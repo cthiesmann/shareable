@@ -24,7 +24,7 @@ const useVideoSync = (roomId, playerRef) => {
 		}
 
 		// Listen to events
-		on(client.innitialState, (innitialState) => {
+		on(client.setInitialState, (innitialState) => {
 			const { lastTimestamp, isPlaying } = innitialState
 			playerRef?.current.seekTo(parseFloat(lastTimestamp))
 			setIsPlaying(isPlaying)

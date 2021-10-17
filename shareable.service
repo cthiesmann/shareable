@@ -1,7 +1,7 @@
 [Unit]
 Description=The Shareable Node.js Backend
-Requires=network.target
-Wants=apache2.service
+After=network.target
+Wants=apache2.service nginx.service
 
 [Service]
 User=git
@@ -18,4 +18,6 @@ WorkingDirectory=/srv/git/shareable/backend
 ExecStart=npm start
 
 Restart=on-failure
-RestartSec=60s
+
+[Install]
+WantedBy=multi-user.target

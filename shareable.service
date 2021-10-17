@@ -15,6 +15,7 @@ ProtectKernelModules=true
 ProtectControlGroups=true
 
 WorkingDirectory=/srv/git/shareable/backend
+Environment="PORT=13337"
 ExecStart=npm start
 
 Restart=on-failure

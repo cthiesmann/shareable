@@ -4,6 +4,7 @@ WORKDIR /app
 COPY . .
 RUN npm install --production
 RUN npm --prefix ./backend install --production
+RUN npm run build
 ENV PORT=13337
 CMD ["node", "/app/backend/index.js"]
 EXPOSE 13337 
